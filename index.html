@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +14,31 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    },
+                    colors: {
+                        // Material 3 Colors
+                        m3: {
+                            light: {
+                                bg: '#f8f9fa',
+                                surface: '#ffffff',
+                                primary: '#0b57d0',
+                                onPrimary: '#ffffff',
+                                outline: '#747775',
+                                onSurface: '#1f1f1f',
+                                surfaceVariant: '#e1e3e1',
+                                error: '#b3261e'
+                            },
+                            dark: {
+                                bg: '#131314',
+                                surface: '#1e1f20',
+                                primary: '#a8c7fa',
+                                onPrimary: '#062e6f',
+                                outline: '#8e918f',
+                                onSurface: '#e3e3e3',
+                                surfaceVariant: '#444746',
+                                error: '#f2b8b5'
+                            }
+                        }
                     }
                 }
             }
@@ -23,33 +48,47 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Custom scrollbar for dark mode */
+        /* Custom scrollbar matching M3 styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #1f2937; 
+            background: transparent;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #444746; 
             border-radius: 4px;
         }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #8e918f; 
+        }
         ::-webkit-scrollbar-thumb {
-            background: #4b5563; 
+            background: #c7c9c9; 
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; 
+            background: #747775; 
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center p-4">
+<body class="min-h-screen bg-m3-light-bg text-m3-light-onSurface dark:bg-m3-dark-bg dark:text-m3-dark-onSurface flex items-center justify-center p-4 transition-colors duration-300">
 
-    <div class="bg-gray-900 rounded-xl shadow-2xl border border-gray-800 w-full max-w-5xl p-6 md:p-8 flex flex-col min-h-[90vh] md:min-h-0 md:h-auto">
+    <div class="bg-m3-light-surface dark:bg-m3-dark-surface rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-5xl p-6 md:p-8 flex flex-col min-h-[90vh] md:min-h-0 md:h-auto transition-colors duration-300">
         
         <!-- Header Section -->
-        <div class="mb-6 flex justify-between items-end">
+        <div class="mb-6 flex justify-between items-start">
             <div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">List Formatter <span class="text-blue-500">Pro</span></h1>
-                <p class="text-gray-400 text-sm mt-1">Paste your text, build your rules, and format instantly.</p>
+                <h1 class="text-2xl font-bold tracking-tight" data-i18n="title">List Formatter <span class="text-m3-light-primary dark:text-m3-dark-primary">Pro</span></h1>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mt-1" data-i18n="subtitle">Paste your text, build your rules, and format instantly.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-m3-light-bg dark:bg-m3-dark-bg p-1.5 rounded-lg border border-gray-200 dark:border-gray-700">
+                <button id="langToggle" class="w-8 h-8 flex items-center justify-center font-bold text-xs rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300">PL</button>
+                <div class="w-px h-5 bg-gray-300 dark:bg-gray-600"></div>
+                <button id="themeToggle" class="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300" title="Toggle Light/Dark Mode">
+                    <!-- Icon updated by JS -->
+                    <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
             </div>
         </div>
 
@@ -58,66 +97,117 @@
             <!-- Input Section -->
             <div class="flex flex-col h-full">
                 <div class="flex justify-between items-center mb-2 min-h-[32px]">
-                    <label for="inputText" class="block text-sm font-medium text-gray-300">Input Text</label>
-                    <button id="clearBtn" class="bg-gray-800 hover:bg-red-900/40 text-gray-300 hover:text-red-400 border border-gray-700 hover:border-red-800 text-xs font-medium py-1.5 px-3 rounded-md transition-all flex items-center gap-1.5 shadow-sm">
+                    <label for="inputText" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-i18n="inputLabel">Input Text</label>
+                    <button id="clearBtn" class="bg-gray-100 dark:bg-[#282a2c] hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-m3-dark-error border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-800/50 text-xs font-medium py-1.5 px-3 rounded-md transition-all flex items-center gap-1.5 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                        Clear Text
+                        <span data-i18n="clearBtn">Clear Text</span>
                     </button>
                 </div>
                 <textarea id="inputText" 
-                    class="flex-grow w-full p-4 bg-gray-950 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none font-mono text-sm text-gray-200 placeholder-gray-600 shadow-inner" 
+                    class="flex-grow w-full p-4 bg-m3-light-bg dark:bg-m3-dark-bg border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-m3-light-primary dark:focus:ring-m3-dark-primary focus:border-transparent resize-none font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-inner transition-colors" 
+                    data-i18n-placeholder="inputPlaceholder"
                     placeholder="Paste your text here...&#10;Example: 3.14, 2.68, 2.90"
                 ></textarea>
             </div>
 
-            <!-- Output Section (Layout Fixed) -->
+            <!-- Output Section -->
             <div class="flex flex-col h-full">
                 <div class="flex justify-between items-center mb-2 min-h-[32px]">
-                    <label for="outputText" class="block text-sm font-medium text-gray-300">Formatted Output</label>
+                    <label for="outputText" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-i18n="outputLabel">Formatted Output</label>
                 </div>
                 
                 <textarea id="outputText" readonly
-                    class="flex-grow w-full p-4 bg-gray-950 border border-gray-700 rounded-lg focus:outline-none resize-none font-mono text-sm text-green-400 placeholder-gray-700 shadow-inner" 
+                    class="flex-grow w-full p-4 bg-m3-light-bg dark:bg-m3-dark-bg border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none resize-none font-mono text-sm text-m3-light-primary dark:text-m3-dark-primary placeholder-gray-500 dark:placeholder-gray-400 shadow-inner transition-colors" 
+                    data-i18n-placeholder="outputPlaceholder"
                     placeholder="Result will appear here..."
                 ></textarea>
                 
                 <div class="mt-4 relative">
-                    <button id="copyBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed border border-blue-500 hover:border-blue-400">
+                    <button id="copyBtn" class="w-full bg-m3-light-primary hover:bg-[#0842a0] text-m3-light-onPrimary dark:bg-m3-dark-primary dark:hover:bg-[#d3e3fd] dark:text-m3-dark-onPrimary font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow shadow-m3-light-primary/20 dark:shadow-none disabled:opacity-50 disabled:cursor-not-allowed border border-transparent">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                        Copy to Clipboard
+                        <span data-i18n="copyBtn">Copy to Clipboard</span>
                     </button>
-                    <!-- Notification absolute positioned to not disrupt layout -->
-                    <div id="notification" class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-green-400 border border-green-500/30 px-3 py-1 rounded shadow-lg text-xs font-medium opacity-0 transition-opacity duration-300 pointer-events-none">
+                    <!-- Notification absolute positioned -->
+                    <div id="notification" class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-green-400 border border-green-500/30 px-3 py-1 rounded shadow-lg text-xs font-medium opacity-0 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
                         Copied successfully!
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="mt-6 pt-6 border-t border-gray-800">
+        <!-- Separator updated here for better visibility in dark mode -->
+        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h3 class="text-sm font-semibold text-gray-300 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2" data-i18n="rulesTitle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-m3-light-primary dark:text-m3-dark-primary"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                         Custom Rules
                     </h3>
-                    <p class="text-xs text-gray-500 mt-1">Rules are applied in order from top to bottom. Use \n for new lines.</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" data-i18n="rulesDesc">Rules are applied in order from top to bottom. Use \n for new lines.</p>
                 </div>
-                <button id="addRuleBtn" class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 hover:border-gray-600 text-xs font-medium py-2 px-3 rounded transition-colors flex items-center gap-1">
+                <button id="addRuleBtn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-[#282a2c] dark:hover:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 text-xs font-medium py-2 px-3 rounded transition-colors flex items-center gap-1 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                    Add Rule
+                    <span data-i18n="addRuleBtn">Add Rule</span>
                 </button>
             </div>
             
             <!-- Rules Container -->
-            <div id="rulesContainer" class="space-y-2 max-h-[30vh] overflow-y-auto pr-2">
+            <div id="rulesContainer" class="space-y-3 max-h-[30vh] overflow-y-auto pr-2">
                 <!-- Rules will be injected here via JS -->
             </div>
         </div>
     </div>
 
     <script>
+        // Dictionaries for Translations
+        const i18n = {
+            en: {
+                title: 'List Formatter <span class="text-m3-light-primary dark:text-m3-dark-primary">Pro</span>',
+                subtitle: 'Paste your text, build your rules, and format instantly.',
+                inputLabel: 'Input Text',
+                clearBtn: 'Clear Text',
+                inputPlaceholder: 'Paste your text here...\nExample: 3.14, 2.68, 2.90',
+                outputLabel: 'Formatted Output',
+                outputPlaceholder: 'Result will appear here...',
+                copyBtn: 'Copy to Clipboard',
+                rulesTitle: 'Custom Rules',
+                rulesDesc: 'Rules are applied in order from top to bottom. Use \\n for new lines.',
+                addRuleBtn: 'Add Rule',
+                noRules: 'No active rules. Output will match input exactly.',
+                find: 'Find',
+                replace: 'Replace',
+                findPlaceholder: 'Text or Regex...',
+                replacePlaceholder: 'Leave blank to delete...',
+                regex: 'Regex'
+            },
+            pl: {
+                title: 'Formatowanie Listy <span class="text-m3-light-primary dark:text-m3-dark-primary">Pro</span>',
+                subtitle: 'Wklej tekst, zdefiniuj reguły i formatuj błyskawicznie.',
+                inputLabel: 'Tekst wejściowy',
+                clearBtn: 'Wyczyść tekst',
+                inputPlaceholder: 'Wklej swój tekst tutaj...\nPrzykład: 3.14, 2.68, 2.90',
+                outputLabel: 'Sformatowany wynik',
+                outputPlaceholder: 'Wynik pojawi się tutaj...',
+                copyBtn: 'Kopiuj do schowka',
+                rulesTitle: 'Własne reguły',
+                rulesDesc: 'Reguły są stosowane od góry do dołu. Użyj \\n dla nowej linii.',
+                addRuleBtn: 'Dodaj regułę',
+                noRules: 'Brak aktywnych reguł. Wynik będzie identyczny z wejściem.',
+                find: 'Znajdź',
+                replace: 'Zastąp',
+                findPlaceholder: 'Tekst lub Regex...',
+                replacePlaceholder: 'Puste by usunąć...',
+                regex: 'Regex'
+            }
+        };
+
+        let currentLang = 'en';
+
         document.addEventListener('DOMContentLoaded', () => {
+            const htmlDoc = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const langToggle = document.getElementById('langToggle');
             const inputText = document.getElementById('inputText');
             const outputText = document.getElementById('outputText');
             const copyBtn = document.getElementById('copyBtn');
@@ -125,6 +215,43 @@
             const addRuleBtn = document.getElementById('addRuleBtn');
             const rulesContainer = document.getElementById('rulesContainer');
             const notification = document.getElementById('notification');
+
+            // Theme Management
+            function updateThemeIcon() {
+                if (htmlDoc.classList.contains('dark')) {
+                    themeIcon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+                } else {
+                    themeIcon.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+                }
+            }
+            themeToggle.addEventListener('click', () => {
+                htmlDoc.classList.toggle('dark');
+                updateThemeIcon();
+            });
+            updateThemeIcon();
+
+            // Language Management
+            function applyTranslations() {
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (i18n[currentLang][key]) {
+                        el.innerHTML = i18n[currentLang][key];
+                    }
+                });
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    if (i18n[currentLang][key]) {
+                        el.placeholder = i18n[currentLang][key];
+                    }
+                });
+                renderRules(); // Re-render to update dynamic rule UI texts
+            }
+            
+            langToggle.addEventListener('click', () => {
+                currentLang = currentLang === 'en' ? 'pl' : 'en';
+                langToggle.innerText = currentLang === 'en' ? 'PL' : 'EN';
+                applyTranslations();
+            });
 
             // Default State
             let rules = [
@@ -151,7 +278,7 @@
                 }
 
                 // Clear previous error states on rules
-                document.querySelectorAll('.rule-row').forEach(el => el.classList.remove('border-red-900', 'bg-red-950/20'));
+                document.querySelectorAll('.rule-row').forEach(el => el.classList.remove('border-m3-light-error', 'dark:border-m3-dark-error'));
 
                 rules.forEach(rule => {
                     if (!rule.active || rule.find === '') return;
@@ -160,20 +287,17 @@
                         const replacement = parseSpecialChars(rule.replace);
                         
                         if (rule.isRegex) {
-                            // Apply as Regular Expression
                             const regex = new RegExp(rule.find, 'g');
                             text = text.replace(regex, replacement);
                         } else {
-                            // Apply as Literal String (split/join is safer than string.replace for all occurrences without regex escaping)
                             const findStr = parseSpecialChars(rule.find);
                             text = text.split(findStr).join(replacement);
                         }
                     } catch (e) {
                         console.error('Invalid Regex in rule:', rule, e);
-                        // Visually indicate error on the specific rule
                         const ruleEl = document.getElementById(`rule-${rule.id}`);
                         if (ruleEl) {
-                            ruleEl.classList.add('border-red-900', 'bg-red-950/20');
+                            ruleEl.classList.add('border-m3-light-error', 'dark:border-m3-dark-error');
                         }
                     }
                 });
@@ -186,50 +310,57 @@
                 rulesContainer.innerHTML = '';
                 
                 if (rules.length === 0) {
-                    rulesContainer.innerHTML = '<div class="text-center py-4 text-sm text-gray-600 border border-dashed border-gray-800 rounded-lg">No active rules. Output will match input exactly.</div>';
+                    rulesContainer.innerHTML = `<div class="text-center py-4 text-sm text-gray-500 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-[#131314]">${i18n[currentLang].noRules}</div>`;
                     return;
                 }
 
                 rules.forEach((rule, index) => {
                     const ruleEl = document.createElement('div');
                     ruleEl.id = `rule-${rule.id}`;
-                    ruleEl.className = `rule-row flex flex-wrap md:flex-nowrap items-center gap-3 p-3 bg-gray-950/50 border ${rule.active ? 'border-gray-800' : 'border-gray-800/50 opacity-60'} rounded-lg transition-all`;
+                    // Significantly higher contrast layout for rules
+                    ruleEl.className = `rule-row flex flex-wrap md:flex-nowrap items-center gap-3 p-3 bg-white dark:bg-[#1e1f20] shadow-sm border ${rule.active ? 'border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-800 opacity-60'} rounded-lg transition-all`;
                     
+                    const lblFind = i18n[currentLang].find;
+                    const lblReplace = i18n[currentLang].replace;
+                    const phFind = i18n[currentLang].findPlaceholder;
+                    const phReplace = i18n[currentLang].replacePlaceholder;
+                    const lblRegex = i18n[currentLang].regex;
+
                     ruleEl.innerHTML = `
                         <!-- Active Toggle -->
                         <div class="flex items-center">
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" class="sr-only peer" ${rule.active ? 'checked' : ''} onchange="toggleRule('${rule.id}', this.checked)">
-                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-gray-300 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                <div class="w-9 h-5 bg-gray-300 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:after:bg-gray-300 dark:peer-checked:after:bg-[#062e6f] after:border-gray-300 dark:after:border-gray-500 dark:peer-checked:after:border-[#062e6f] after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-m3-light-primary dark:peer-checked:bg-m3-dark-primary"></div>
                             </label>
                         </div>
                         
                         <!-- Order Number -->
-                        <span class="text-xs font-mono text-gray-600 hidden md:block">#${index + 1}</span>
+                        <span class="text-xs font-mono text-gray-500 dark:text-gray-400 hidden md:block">#${index + 1}</span>
 
                         <!-- Find Input -->
-                        <div class="flex-grow flex items-center gap-2 bg-gray-900 border border-gray-700 rounded-md px-2 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-                            <span class="text-xs text-gray-500 font-medium">Find</span>
+                        <div class="flex-grow flex items-center gap-2 bg-gray-50 dark:bg-[#131314] border border-gray-300 dark:border-gray-600 rounded-md px-2 focus-within:border-m3-light-primary focus-within:ring-1 focus-within:ring-m3-light-primary dark:focus-within:border-m3-dark-primary dark:focus-within:ring-m3-dark-primary transition-colors">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium shrink-0">${lblFind}</span>
                             <input type="text" value="${escapeHtml(rule.find)}" oninput="updateRule('${rule.id}', 'find', this.value)" 
-                                class="w-full bg-transparent border-none text-sm text-gray-200 focus:ring-0 py-1.5 font-mono placeholder-gray-600" placeholder="Text or Regex...">
+                                class="w-full bg-transparent border-none text-sm text-gray-900 dark:text-gray-100 focus:ring-0 py-1.5 font-mono placeholder-gray-400 dark:placeholder-gray-500" placeholder="${phFind}">
                         </div>
 
                         <!-- Replace Input -->
-                        <div class="flex-grow flex items-center gap-2 bg-gray-900 border border-gray-700 rounded-md px-2 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-                            <span class="text-xs text-gray-500 font-medium">Replace</span>
+                        <div class="flex-grow flex items-center gap-2 bg-gray-50 dark:bg-[#131314] border border-gray-300 dark:border-gray-600 rounded-md px-2 focus-within:border-m3-light-primary focus-within:ring-1 focus-within:ring-m3-light-primary dark:focus-within:border-m3-dark-primary dark:focus-within:ring-m3-dark-primary transition-colors">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium shrink-0">${lblReplace}</span>
                             <input type="text" value="${escapeHtml(rule.replace)}" oninput="updateRule('${rule.id}', 'replace', this.value)" 
-                                class="w-full bg-transparent border-none text-sm text-gray-200 focus:ring-0 py-1.5 font-mono placeholder-gray-600" placeholder="Leave blank to delete...">
+                                class="w-full bg-transparent border-none text-sm text-gray-900 dark:text-gray-100 focus:ring-0 py-1.5 font-mono placeholder-gray-400 dark:placeholder-gray-500" placeholder="${phReplace}">
                         </div>
 
                         <!-- Regex Toggle -->
                         <div class="flex items-center gap-1.5 min-w-max">
                             <input type="checkbox" id="regex-${rule.id}" ${rule.isRegex ? 'checked' : ''} onchange="updateRule('${rule.id}', 'isRegex', this.checked)"
-                                class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-700 rounded focus:ring-blue-600 focus:ring-2">
-                            <label for="regex-${rule.id}" class="text-xs text-gray-400 cursor-pointer" title="Use Regular Expression">Regex</label>
+                                class="w-4 h-4 text-m3-light-primary dark:text-m3-dark-primary bg-gray-50 dark:bg-[#131314] border-gray-300 dark:border-gray-600 rounded focus:ring-m3-light-primary dark:focus:ring-m3-dark-primary focus:ring-2">
+                            <label for="regex-${rule.id}" class="text-xs text-gray-600 dark:text-gray-400 cursor-pointer" title="Use Regular Expression">${lblRegex}</label>
                         </div>
 
                         <!-- Delete Button -->
-                        <button onclick="deleteRule('${rule.id}')" class="text-gray-500 hover:text-red-400 p-1 rounded hover:bg-gray-800 transition-colors" title="Delete Rule">
+                        <button onclick="deleteRule('${rule.id}')" class="text-gray-500 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Delete Rule">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                         </button>
                     `;
@@ -242,7 +373,7 @@
                 const rule = rules.find(r => r.id === id);
                 if (rule) {
                     rule.active = isActive;
-                    renderRules(); // Re-render to update visual opacity state
+                    renderRules();
                     applyRules();
                 }
             };
@@ -283,8 +414,6 @@
             addRuleBtn.addEventListener('click', () => {
                 rules.push({ id: generateId(), find: '', replace: '', isRegex: false, active: true });
                 renderRules();
-                
-                // Focus the newly created input
                 setTimeout(() => {
                     const newInputs = rulesContainer.lastElementChild.querySelectorAll('input[type="text"]');
                     if (newInputs.length > 0) newInputs[0].focus();
@@ -301,18 +430,15 @@
                 
                 try {
                     document.execCommand('copy');
-                    showNotification();
+                    showNotification(currentLang === 'en' ? i18n.en.copied : i18n.pl.copied, true);
                 } catch (err) {
                     console.error('Failed to copy text', err);
                     if (navigator.clipboard) {
-                        navigator.clipboard.writeText(outputText.value).then(showNotification);
+                        navigator.clipboard.writeText(outputText.value).then(() => {
+                            showNotification(currentLang === 'en' ? i18n.en.copied : i18n.pl.copied, true);
+                        });
                     } else {
-                        // Fallback UI instead of alert
-                        notification.innerText = "Copy failed manually highlight and copy.";
-                        notification.classList.replace('text-green-400', 'text-red-400');
-                        notification.classList.replace('border-green-500/30', 'border-red-500/30');
-                        notification.classList.remove('opacity-0');
-                        setTimeout(() => notification.classList.add('opacity-0'), 3000);
+                        showNotification(currentLang === 'en' ? i18n.en.copyFail : i18n.pl.copyFail, false);
                     }
                 } finally {
                     document.body.removeChild(tempTextArea);
@@ -327,34 +453,43 @@
                 }
             }
 
-            function showNotification() {
-                // Reset styling in case of previous errors
-                notification.innerText = "Copied successfully!";
-                notification.classList.replace('text-red-400', 'text-green-400');
-                notification.classList.replace('border-red-500/30', 'border-green-500/30');
+            function showNotification(msg, success) {
+                notification.innerText = msg;
+                if(success) {
+                    notification.classList.replace('text-red-400', 'text-green-400');
+                    notification.classList.replace('border-red-500/30', 'border-green-500/30');
+                } else {
+                    notification.classList.replace('text-green-400', 'text-red-400');
+                    notification.classList.replace('border-green-500/30', 'border-red-500/30');
+                }
                 
                 notification.classList.remove('opacity-0');
                 
                 const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Copied!';
-                copyBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
-                copyBtn.classList.replace('hover:bg-blue-500', 'hover:bg-emerald-500');
-                copyBtn.classList.replace('border-blue-500', 'border-emerald-500');
+                const copiedLabel = currentLang === 'en' ? 'Copied!' : 'Skopiowano!';
+                
+                if(success) {
+                    copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> <span>${copiedLabel}</span>`;
+                    copyBtn.classList.replace('bg-m3-light-primary', 'bg-emerald-600');
+                    copyBtn.classList.replace('dark:bg-m3-dark-primary', 'dark:bg-emerald-600');
+                    copyBtn.classList.replace('dark:text-m3-dark-onPrimary', 'dark:text-white');
+                }
 
                 setTimeout(() => {
                     notification.classList.add('opacity-0');
-                    
                     setTimeout(() => {
-                        copyBtn.innerHTML = originalText;
-                        copyBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
-                        copyBtn.classList.replace('hover:bg-emerald-500', 'hover:bg-blue-500');
-                        copyBtn.classList.replace('border-emerald-500', 'border-blue-500');
+                        if(success) {
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.classList.replace('bg-emerald-600', 'bg-m3-light-primary');
+                            copyBtn.classList.replace('dark:bg-emerald-600', 'dark:bg-m3-dark-primary');
+                            copyBtn.classList.replace('dark:text-white', 'dark:text-m3-dark-onPrimary');
+                        }
                     }, 300);
                 }, 2000);
             }
 
             // Initial setup
-            renderRules();
+            applyTranslations(); // Renders rules inherently
             updateCopyButtonState();
         });
     </script>
