@@ -98,10 +98,17 @@
             <div class="flex flex-col h-full">
                 <div class="flex justify-between items-center mb-2 min-h-[32px]">
                     <label for="inputText" class="block text-sm font-medium text-gray-700 dark:text-gray-300" data-i18n="inputLabel">Input Text</label>
-                    <button id="clearBtn" class="bg-gray-100 dark:bg-[#282a2c] hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-m3-dark-error border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-800/50 text-xs font-medium py-1.5 px-3 rounded-md transition-all flex items-center gap-1.5 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                        <span data-i18n="clearBtn">Clear Text</span>
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <!-- PDF Line Break Cleaner Checkbox -->
+                        <label class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 cursor-pointer select-none">
+                            <input type="checkbox" id="cleanNewlines" checked class="w-4 h-4 text-m3-light-primary dark:text-m3-dark-primary bg-gray-50 dark:bg-[#131314] border-gray-300 dark:border-gray-600 rounded focus:ring-m3-light-primary dark:focus:ring-m3-dark-primary focus:ring-2">
+                            <span data-i18n="cleanNewlines">Remove line breaks</span>
+                        </label>
+                        <button id="clearBtn" class="bg-gray-100 dark:bg-[#282a2c] hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-m3-dark-error border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-800/50 text-xs font-medium py-1.5 px-3 rounded-md transition-all flex items-center gap-1.5 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            <span data-i18n="clearBtn">Clear Text</span>
+                        </button>
+                    </div>
                 </div>
                 <textarea id="inputText" 
                     class="flex-grow w-full p-4 bg-m3-light-bg dark:bg-m3-dark-bg border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-m3-light-primary dark:focus:ring-m3-dark-primary focus:border-transparent resize-none font-mono text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-inner transition-colors" 
@@ -166,10 +173,13 @@
                 subtitle: 'Paste your text, build your rules, and format instantly.',
                 inputLabel: 'Input Text',
                 clearBtn: 'Clear Text',
+                cleanNewlines: 'Remove line breaks',
                 inputPlaceholder: 'Paste your text here...\nExample: 3.14, 2.68, 2.90',
                 outputLabel: 'Formatted Output',
                 outputPlaceholder: 'Result will appear here...',
                 copyBtn: 'Copy to Clipboard',
+                copied: 'Copied to clipboard!',
+                copyFail: 'Copy failed. Please copy manually.',
                 rulesTitle: 'Custom Rules',
                 rulesDesc: 'Rules are applied in order from top to bottom. Use \\n for new lines.',
                 addRuleBtn: 'Add Rule',
@@ -185,10 +195,13 @@
                 subtitle: 'Wklej tekst, zdefiniuj reguły i formatuj błyskawicznie.',
                 inputLabel: 'Tekst wejściowy',
                 clearBtn: 'Wyczyść tekst',
+                cleanNewlines: 'Usuń przejścia do linii',
                 inputPlaceholder: 'Wklej swój tekst tutaj...\nPrzykład: 3.14, 2.68, 2.90',
                 outputLabel: 'Sformatowany wynik',
                 outputPlaceholder: 'Wynik pojawi się tutaj...',
                 copyBtn: 'Kopiuj do schowka',
+                copied: 'Skopiowano do schowka!',
+                copyFail: 'Błąd kopiowania. Skopiuj ręcznie.',
                 rulesTitle: 'Własne reguły',
                 rulesDesc: 'Reguły są stosowane od góry do dołu. Użyj \\n dla nowej linii.',
                 addRuleBtn: 'Dodaj regułę',
@@ -212,6 +225,7 @@
             const outputText = document.getElementById('outputText');
             const copyBtn = document.getElementById('copyBtn');
             const clearBtn = document.getElementById('clearBtn');
+            const cleanNewlines = document.getElementById('cleanNewlines');
             const addRuleBtn = document.getElementById('addRuleBtn');
             const rulesContainer = document.getElementById('rulesContainer');
             const notification = document.getElementById('notification');
@@ -275,6 +289,11 @@
                     outputText.value = '';
                     updateCopyButtonState();
                     return;
+                }
+
+                // If "Remove line breaks" is active, preprocess newlines out of input
+                if (cleanNewlines.checked) {
+                    text = text.replace(/\r?\n/g, ' ').replace(/ {2,}/g, ' ');
                 }
 
                 // Clear previous error states on rules
@@ -403,6 +422,7 @@
 
             // Event Listeners
             inputText.addEventListener('input', applyRules);
+            cleanNewlines.addEventListener('change', applyRules);
 
             clearBtn.addEventListener('click', () => {
                 inputText.value = '';
@@ -473,6 +493,8 @@
                     copyBtn.classList.replace('bg-m3-light-primary', 'bg-emerald-600');
                     copyBtn.classList.replace('dark:bg-m3-dark-primary', 'dark:bg-emerald-600');
                     copyBtn.classList.replace('dark:text-m3-dark-onPrimary', 'dark:text-white');
+                    copyBtn.classList.replace('hover:bg-[#0842a0]', 'hover:bg-emerald-700');
+                    copyBtn.classList.replace('dark:hover:bg-[#d3e3fd]', 'dark:hover:bg-emerald-500');
                 }
 
                 setTimeout(() => {
@@ -483,6 +505,8 @@
                             copyBtn.classList.replace('bg-emerald-600', 'bg-m3-light-primary');
                             copyBtn.classList.replace('dark:bg-emerald-600', 'dark:bg-m3-dark-primary');
                             copyBtn.classList.replace('dark:text-white', 'dark:text-m3-dark-onPrimary');
+                            copyBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-[#0842a0]');
+                            copyBtn.classList.replace('dark:hover:bg-emerald-500', 'dark:hover:bg-[#d3e3fd]');
                         }
                     }, 300);
                 }, 2000);
